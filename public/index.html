@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Studio Display</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+
+    <ul class="feed"></ul>
+
+    <script src="/socket.io/socket.io.js" type="application/javascript"></script>
+    <script>
+        let imageList = []
+        var socket = io();
+        const imageListContainer = document.querySelector('.feed')
+        const gri = function (min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        function imageExists(image) {
+            for (let i = 0; i < imageList.length; i++) {
+                if (image === imageList[i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function animate(){
+            window.requestAnimationFrame(animate)
+            
+        }
+
+        function renderImageList(newList) {
+            let currentImages = imageListContainer.querySelectorAll('img')
+            for (let i = 0; i < newList.length; i++) {
+                let newImage = newList[i];
+                if (!imageExists(newImage)) {
+                    let li = document.createElement('li');
+                    let caption = document.createElement('span');
+                    caption.innerText = newImage
+                    caption.classList.add('feed-caption')
+                    li.classList.add('feed-item')
+                    li.style.gridColumnEnd = `span ${gri(3, 9)}`
+                    let el = document.createElement('img');
+                    el.setAttribute('src', `./images/${newImage}`)
+                    li.appendChild(el)
+                    li.appendChild(caption)
+                    imageListContainer.appendChild(li)
+                }
+            }
+            imageList = newList;
+        }
+
+        socket.on('imageList', function (list) {
+            renderImageList(list)
+        })
+        window.setInterval(function () {
+            console.log('req image list')
+            //            socket.emit('getImageList', null)
+        }, 30000)
+        socket.emit('getImageList', null)
+        animate()
+    </script>
+</body>
+
+</html>
