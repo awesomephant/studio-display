@@ -24,34 +24,59 @@
         }
         function imageExists(image) {
             for (let i = 0; i < imageList.length; i++) {
-                if (image === imageList[i]) {
+                if (image.filename === imageList[i].filename) {
                     return true;
                 }
             }
             return false;
         }
 
-        function animate(){
+        function animate() {
             window.requestAnimationFrame(animate)
-            
+        }
+
+        function cycleImage(){
+            let lastImage = imageListContainer.querySelector('li:last-of-type')
+            let clone = lastImage.cloneNode(true)
+            lastImage.parentElement.removeChild(lastImage)
+            imageListContainer.insertAdjacentElement('afterbegin', clone)
         }
 
         function renderImageList(newList) {
-            let currentImages = imageListContainer.querySelectorAll('img')
             for (let i = 0; i < newList.length; i++) {
                 let newImage = newList[i];
                 if (!imageExists(newImage)) {
                     let li = document.createElement('li');
                     let caption = document.createElement('span');
-                    caption.innerText = newImage
+                    let date = document.createElement('date');
+                    caption.innerText = newImage.filename
+                    date.innerText = newImage.lastModified
                     caption.classList.add('feed-caption')
+                    date.classList.add('feed-caption')
                     li.classList.add('feed-item')
-                    li.style.gridColumnEnd = `span ${gri(3, 9)}`
-                    let el = document.createElement('img');
-                    el.setAttribute('src', `./images/${newImage}`)
-                    li.appendChild(el)
-                    li.appendChild(caption)
-                    imageListContainer.appendChild(li)
+                    let el = null;
+                    let extension = newImage.extension.toLowerCase()
+                    console.log(extension)
+                    if (extension === '.jpg'
+                        || extension === '.png'
+                        || extension === '.gif'
+                        || extension === '.jpg'
+                    ) {
+                        el = document.createElement('img');
+                        el.setAttribute('src', `./studio-display/${newImage.filename}`)
+                    } else if (extension === '.mp4') {
+                        el = document.createElement('video');
+                        el.setAttribute('src', `./studio-display/${newImage.filename}`)
+                        el.muted = true;
+                        el.setAttribute('autoplay', 'autoplay')
+                        el.setAttribute('loop', 'loop')
+                    }
+                    if (el){   
+                        li.appendChild(el)
+                        li.appendChild(caption)
+                        li.appendChild(date)
+                        imageListContainer.insertAdjacentElement('afterbegin', li)
+                    }
                 }
             }
             imageList = newList;
@@ -59,11 +84,15 @@
 
         socket.on('imageList', function (list) {
             renderImageList(list)
+            console.log(list)
         })
         window.setInterval(function () {
-            console.log('req image list')
-            //            socket.emit('getImageList', null)
-        }, 30000)
+            cycleImage()
+        }, 1000)
+        
+        window.setInterval(function () {
+            socket.emit('getImageList', null)
+        }, 5000)
         socket.emit('getImageList', null)
         animate()
     </script>

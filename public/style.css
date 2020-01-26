@@ -1,3 +1,13 @@
+@keyframes enter {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 100vh;
+        opacity: 1;
+    }
+}
 * {
     margin: 0;
     padding: 0;
@@ -13,15 +23,17 @@ img {
     width: 100%;
 }
 .feed {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    display: block;
     padding: 10px;
     height: 100vh;
     align-items: center;
 }
 .feed-item {
     margin-right: 10px;
+    display: block;
+    overflow: hidden;
     margin-bottom: 10px;
+    animation: enter forwards 1000ms;
 }
 
 .feed-caption {
