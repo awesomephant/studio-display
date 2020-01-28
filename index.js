@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 const fs = require('fs')
 const path = require('path');
 
-const downloadPath = './public/studio-display/'
+const downloadPath = './public/assets/studio-display/'
 let imageList = []
 
 function updateImageList(cb) {

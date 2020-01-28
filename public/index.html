@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Studio Display</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="./timeago.min.js"></script>
 </head>
 
 <body>
@@ -50,7 +51,7 @@
                     let caption = document.createElement('span');
                     let date = document.createElement('date');
                     caption.innerText = newImage.filename
-                    date.innerText = newImage.lastModified
+                    date.innerText = timeago.format(newImage.lastModified);
                     caption.classList.add('feed-caption')
                     date.classList.add('feed-caption')
                     li.classList.add('feed-item')
@@ -63,18 +64,18 @@
                         || extension === '.jpg'
                     ) {
                         el = document.createElement('img');
-                        el.setAttribute('src', `./studio-display/${newImage.filename}`)
+                        el.setAttribute('src', `./assets/studio-display/${newImage.filename}`)
                     } else if (extension === '.mp4') {
                         el = document.createElement('video');
-                        el.setAttribute('src', `./studio-display/${newImage.filename}`)
+                        el.setAttribute('src', `./assets/studio-display/${newImage.filename}`)
                         el.muted = true;
                         el.setAttribute('autoplay', 'autoplay')
                         el.setAttribute('loop', 'loop')
                     }
                     if (el){   
                         li.appendChild(el)
-                        li.appendChild(caption)
-                        li.appendChild(date)
+//                        li.appendChild(caption)
+                       li.appendChild(date)
                         imageListContainer.insertAdjacentElement('afterbegin', li)
                     }
                 }
@@ -87,8 +88,8 @@
             console.log(list)
         })
         window.setInterval(function () {
-            cycleImage()
-        }, 1000)
+            // cycleImage()
+        }, 5000)
         
         window.setInterval(function () {
             socket.emit('getImageList', null)
