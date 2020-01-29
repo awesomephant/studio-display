@@ -19,6 +19,7 @@
     <script>
         let imageList = []
         var socket = io();
+        let currentZ = 1;
         const imageListContainer = document.querySelector('.feed')
         const gri = function (min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -37,8 +38,10 @@
         }
 
         function cycleImage(){
+            currentZ++;
             let lastImage = imageListContainer.querySelector('li:last-of-type')
             let clone = lastImage.cloneNode(true)
+            clone.style.zIndex = currentZ;
             lastImage.parentElement.removeChild(lastImage)
             imageListContainer.insertAdjacentElement('afterbegin', clone)
         }
@@ -55,6 +58,9 @@
                     caption.classList.add('feed-caption')
                     date.classList.add('feed-caption')
                     li.classList.add('feed-item')
+                    li.style.left = `${gri(0, 8) * 10}%`;
+                    li.style.top = `${gri(0, 4) * 10}%`;
+                    li.style.width = `${gri(4, 10) * 10}%`;
                     let el = null;
                     let extension = newImage.extension.toLowerCase()
                     console.log(extension)
@@ -72,7 +78,7 @@
                         el.setAttribute('autoplay', 'autoplay')
                         el.setAttribute('loop', 'loop')
                     }
-                    if (el){   
+                    if (el){
                         li.appendChild(el)
 //                        li.appendChild(caption)
                        li.appendChild(date)
@@ -88,8 +94,8 @@
             console.log(list)
         })
         window.setInterval(function () {
-            // cycleImage()
-        }, 5000)
+             cycleImage()
+        }, 2000)
         
         window.setInterval(function () {
             socket.emit('getImageList', null)
